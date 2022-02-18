@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{%block content%}
+<h1>Sale List</h1>
+
+{% for sale in sales %}
+<div class="card">
+    <a href="{% url 'sale_detail' sale.id %}">
+        <div class="card-content">
+            <span class="card-title">{{ sale.store }}</span>
+            <p>Date of sale: {{ sale.date }}</p>
+            <p>Percent off: {{ sale.salevalue }}%</p>
+        </div>
+    </a>
+</div>
+{% endfor %}
+
+
+{%endblock%}

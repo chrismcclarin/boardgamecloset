@@ -1,0 +1,86 @@
+{% extends 'base.html' %}{%block content%}
+
+<h1>Game Details</h1>
+
+<div class="card">
+    <div class="card-content">
+        <span class="card-title">{{ games.name }}</span>
+            <p>Description: {{ games.description }}</p>
+            <p>Preferred Player Count: {{ games.preferredplayers }}</p>
+            <p>Time to play: {{ games.timetoplay }} minutes</p>
+        <div class="card-action">
+            <a href="{% url 'games_update' games.id %}">update</a>
+            <a href="{% url 'games_delete' games.id %}">delete</a>
+        </div>
+    </div>
+</div>
+<div class="col s6">
+    <form action="{% url 'new_gametime' games.id %}" method="post">
+        {% csrf_token %} {{ gametimeform.as_p }}
+        <input type="submit" class="btn" value="New Gametime" />
+    </form>
+    <table class="striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Time Played</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gametime in games.gametime_set.all %}
+            <tr>
+                <td>{{gametime.date}}</td>
+                <td>{{gametime.location}}</td>
+                <td>{{gametime.timeplayed}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<hr />
+<div class="row">
+    <div class="col s6">
+        <h3>{{ games.name }} Current Sales</h3>
+            {% if games.sale.count %} {% for s in games.sale.all %}
+    <div class="card">
+        <div class="card-content">
+            <span class="card-title">
+                {{s.store}} is having a sale
+            </span>
+            <form action="{% url 'rm_assoc_sale' games.id s.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn">Remove</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %} {% else %}
+    <h5>No Sales :(</h5>
+    {% endif %}
+</div>
+<div class="col s6">
+    <h3>Available Sales</h3>
+    {% if sales.count %}
+        {% for sale in sales.all %}
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                        {{sale.store}} is having a sale
+                    </span>
+                </div>
+                <div class="card-action">
+                    <form action="{% url 'assoc_sale' games.id sale.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Add</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h5>{{games.name}} Has All Known Sales</h5>
+    {% endif %}
+</div>
+</div>
+
+
+{%endblock%}
